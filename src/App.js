@@ -4,6 +4,8 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Weather from './Components/Weather';
+
 
 
 class App extends React.Component {
@@ -12,27 +14,40 @@ class App extends React.Component {
     super (props);
     this.state = {
       searchQuery:'' ,
-      locData: ''
+      locData: '' ,
+      status: false,
+      show : false ,
+      weatherData: []
+
     }
   }
 
+  updatSearch = (e)=>{
+    this.setState({
+      searchQuery: e.target.value
+  
+    })
+    console.log(this.state.searchQuery);
+  }
 
 getLocation = async (e) => {
   e.preventDefault();
+  
   let locUrl =(`https://us1.locationiq.com/v1/search.php?key=pk.8269ff735eee1becb57a1e949f9d6420&q=${this.state.searchQuery}&format=json`)
   let locResult = await axios.get(locUrl);
+  let weatherData = await axios.get(`https://city-explorer-laith.herokuapp.com/`)
+
   this.setState({
-    locData:locResult.data[0]
+    locData:locResult.data[0] ,
+    show : true  ,
+    status: true,
+
+    weatherData: weatherData.data.data
+
    });
 }
 
-updatSearch = (e)=>{
-  this.setState({
-    searchQuery: e.target.value
 
-  })
-  console.log(this.state.searchQuery);
-}
 
 
 
@@ -51,11 +66,10 @@ updatSearch = (e)=>{
             exploer
           </Button>
         </Form>
-
-
+      
+          {this.state.show && 
         <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top"  src= {`https://maps.locationiq.com/v3/staticmap?key=pk.8269ff735eee1becb57a1e949f9d6420
-&center=${this.state.locData.lat} , ${this.state.locData.lon}&zoom=10`} alt='' />
+        <Card.Img variant="top"  src= {` https://maps.locationiq.com/v3/staticmap?key=pk.8269ff735eee1becb57a1e949f9d6420&q&center=${this.state.locData.lat},${this.state.locData.lon}&zoom=1-18`} alt='display Map'alt='' />
         <Card.Body>
           <Card.Title>          <p>{this.state.locData.display_name}</p>
 </Card.Title>
@@ -64,9 +78,18 @@ updatSearch = (e)=>{
 
           </Card.Text>
         </Card.Body>
-      </Card>
-  
+      </Card>    
+          }
+
+            {this.state.status &&
+              <Weather
+                weatherData={this.state.weatherData}
+              />
+            }
+
       </div>
+    
+
       )
      }
   
