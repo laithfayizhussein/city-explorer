@@ -10,43 +10,44 @@ import Weather from './Components/Weather';
 
 class App extends React.Component {
 
-  constructor (props){
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
-      searchQuery:'' ,
-      locData: '' ,
-      status: false,
-      show : false ,
-      weatherData: []
-
+      cityName: '',
+      cityData: {},
+      lat: '',
+      lon: '',
+      weatherData: [],
+      displayData: false,
     }
-  }
+  };
 
-  updatSearch = (e)=>{
+  updateCityNameState = (e) => {
+    
     this.setState({
-      searchQuery: e.target.value
-  
-    })
-    console.log(this.state.searchQuery);
+      cityName: e.target.value
+    });
   }
 
-getLocation = async (e) => {
-  e.preventDefault();
-  
-  let locUrl =(`https://us1.locationiq.com/v1/search.php?key=pk.8269ff735eee1becb57a1e949f9d6420&q=${this.state.searchQuery}&format=json`)
-  let locResult = await axios.get(locUrl);
-  let weatherData = await axios.get(`https://city-explorer-laith.herokuapp.com/`)
+  getCityData = async (e) => {
+    e.preventDefault();
+    await axios.get(`https://us1.locationiq.com/v1/search.php?key=pk.8269ff735eee1becb57a1e949f9d6420&city=${this.state.cityName}&format=json`).then(locationResponse => {
 
-  this.setState({
-    locData:locResult.data[0] ,
-    show : true  ,
-    status: true,
+      this.setState({
+        cityData: locationResponse.data[0],
+        lat: locationResponse.data[0].lat,
+        lon: locationResponse.data[0].lon,
+      });
+      axios.get(`${process.env.REACT_APP_URL}?lat=${this.state.lat}&lon=${this.state.lon}`).then(weatherResponse => {
+        this.setState({
+          weatherData: weatherResponse.data,
+          displayData: true
+        })
 
-    weatherData: weatherData.data.data
+      });
+    });
 
-   });
-}
-
+  }
 
 
 
@@ -55,26 +56,26 @@ getLocation = async (e) => {
     return (
       <div>
        
-          <Form onSubmit={this.getLocation}>
+          <Form onSubmit={this.getCityData}>
           <Form.Group className="mb-3" controlId="write the location ">
             <Form.Label>city explorer</Form.Label>
-            <Form.Control type="text" placeholder="write the location" onChange={this.updatSearch}/>
+            <Form.Control type="text" placeholder="write the location" onChange={this.updateCityNameState}/>
             <Form.Text className="text-muted">
             </Form.Text>
           </Form.Group>
-          <Button onClick={this.getLocation} variant="primary" type="submit">
+          <Button onClick={this.getCityData} variant="primary" type="submit">
             exploer
           </Button>
         </Form>
       
           {this.state.show && 
+          
         <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top"  src= {` https://maps.locationiq.com/v3/staticmap?key=pk.8269ff735eee1becb57a1e949f9d6420&q&center=${this.state.locData.lat},${this.state.locData.lon}&zoom=1-18`} alt='display Map'alt='' />
+          
+        <Card.Img variant="top"  src= {`https://maps.locationiq.com/v3/staticmap?key=pk.8269ff735eee1becb57a1e949f9d6420&q&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=1-18`} alt='display Map'alt='' />
         <Card.Body>
-          <Card.Title>          <p>{this.state.locData.display_name}</p>
-</Card.Title>
+          <Card.Title>    <p> {this.state.cityData.display_name}</p> </Card.Title>
           <Card.Text>
-          <p>{this.state.locData.display_name}</p>
 
           </Card.Text>
         </Card.Body>
