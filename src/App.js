@@ -19,6 +19,7 @@ class App extends React.Component {
       lon: '',
       weatherData: [],
       displayData: false,
+
     }
   };
 
@@ -63,28 +64,44 @@ class App extends React.Component {
             <Form.Text className="text-muted">
             </Form.Text>
           </Form.Group>
-          <Button onClick={this.getCityData} variant="primary" type="submit">
+          <Button  variant="primary" type="submit">
             exploer
           </Button>
-        </Form>
+          </Form>  
+
       
-          {this.state.show && 
+          {this.state.displayData && 
           
         <Card style={{ width: '18rem' }}>
           
-        <Card.Img variant="top"  src= {`https://maps.locationiq.com/v3/staticmap?key=pk.8269ff735eee1becb57a1e949f9d6420&q&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=1-18`} alt='display Map'alt='' />
+        <Card.Img variant="top"  src= {`https://maps.locationiq.com/v3/staticmap?key=pk.8269ff735eee1becb57a1e949f9d6420&q&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=20`} alt='display Map' alt='' />
         <Card.Body>
           <Card.Title>    <p> {this.state.cityData.display_name}</p> </Card.Title>
           <Card.Text>
-
+          <p> {this.state.cityData.display_name}</p>
           </Card.Text>
         </Card.Body>
-      </Card>    
+      </Card>  
           }
 
-            {this.state.status &&
+                  {/* {this.state.weatherData.map(weatherObj => {
+                return (
+                  <>
+                    <p>
+                      {weatherObj.description}
+                    </p>
+                    <p>
+                      {weatherObj.date}
+                    </p>
+                  </>
+                )
+              })
+            } */}
+
+            {this.state.displayData &&
               <Weather
                 weatherData={this.state.weatherData}
+
               />
             }
 
@@ -92,6 +109,7 @@ class App extends React.Component {
     
 
       )
+      
      }
   
 }
