@@ -7,15 +7,16 @@ class Weather extends react.Component {
         return (
             <div>
                
-            <ListGroup style={{'margin-top': '7%'}}>
-            <h2 style={{'text-align':'center'}}>WITHER</h2>
+            <ListGroup style={{'margin-top': '7%' , color: 'blue'}}>
+            <h2 style={{'text-align':'center'}}>Weather</h2>
             {
     this.props.weatherData.map(weatherObj => {
-        return <ListGroup.Item>{weatherObj.data.description}{weatherObj.date}</ListGroup.Item>
+        return <ListGroup.Item>{weatherObj.description}<br></br>{weatherObj.date}</ListGroup.Item>
         })}
 
             </ListGroup>
-            </div>
+            
+            </div> 
         )
     }
 
