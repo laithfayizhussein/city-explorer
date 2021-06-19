@@ -5,6 +5,8 @@ import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Weather from './Components/Weather';
+import Movies from './Components/Movies';
+
 
 
 
@@ -19,6 +21,9 @@ class App extends React.Component {
       lon: '',
       weatherData: [],
       displayData: false,
+       moviesData: '',
+       moviesStatus: false
+      
 
     }
   };
@@ -39,14 +44,27 @@ class App extends React.Component {
         lat: locationResponse.data[0].lat,
         lon: locationResponse.data[0].lon,
       });
-      axios.get(`${process.env.REACT_APP_URL}?lat=${this.state.lat}&lon=${this.state.lon}`).then(weatherResponse => {
+    } );
+       axios.get(`${process.env.REACT_APP_URL}/weather?lat=${this.state.lat}&lon=${this.state.lon}`).then(weatherResponse => {
         this.setState({
           weatherData: weatherResponse.data,
           displayData: true
         })
+      } );
 
-      });
-    });
+      axios.get(`${process.env.REACT_APP_URL}/movie?&query=${this.state.cityName}`).then (moviesData =>{
+
+        this.setState({
+          moviesData: moviesData.data,
+         
+          moviesStatus: true
+        });
+        console.log(moviesData);
+  
+      } )
+     
+     
+   
 
   }
 
@@ -104,7 +122,12 @@ class App extends React.Component {
 
               />
             }
+             {this.state.moviesStatus &&
+                  <Movies
+                    moviesData={this.state.moviesData}
+                  />
 
+                }
       </div>
     
 
